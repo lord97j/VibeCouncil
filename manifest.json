@@ -1,0 +1,40 @@
+{
+  "manifest_version": 3,
+  "name": "VibeCouncil",
+  "description": "Multi-AI discussion orchestrator — browser-based expert council",
+  "version": "0.1.0",
+  "permissions": [
+    "sidePanel",
+    "tabs",
+    "contextMenus",
+    "storage",
+    "scripting",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://chatgpt.com/*",
+    "https://gemini.google.com/*"
+  ],
+  "side_panel": {
+    "default_path": "src/sidepanel/index.html"
+  },
+  "action": {
+    "default_title": "Open VibeCouncil"
+  },
+  "background": {
+    "service_worker": "src/background/index.ts",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://chatgpt.com/*"],
+      "js": ["src/adapters/chatgpt/index.ts"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://gemini.google.com/*"],
+      "js": ["src/adapters/gemini/index.ts"],
+      "run_at": "document_idle"
+    }
+  ]
+}
