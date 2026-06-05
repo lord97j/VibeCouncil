@@ -44,23 +44,108 @@ export function delay(ms: number): Promise<void> {
 }
 
 /**
- * Simulate human-like typing into a contenteditable or input element.
- * Uses execCommand('insertText') to trigger native input events.
+ * Simulate prompt entry into a contenteditable or input element.
+ * Modern AI sites use controlled editors, so make sure both DOM value
+ * and input/change events are updated.
  */
 export async function typeIntoInput(
   el: Element,
   text: string,
   charDelayMs = 40,
 ): Promise<void> {
-  (el as HTMLElement).focus();
-  for (const char of text) {
-    // execCommand may not be available in test environments (jsdom)
-    if (document.execCommand) {
-      document.execCommand('insertText', false, char);
-    } else {
-      // Fallback: direct textContent mutation for non-browser environments
-      el.textContent = (el.textContent ?? '') + char;
-    }
-    await delay(charDelayMs + Math.random() * 40);
+  const htmlEl = el as HTMLElement;
+  htmlEl.click();
+  htmlEl.focus();
+
+  if (el instanceof HTMLTextAreaElement || el instanceof HTMLInputElement) {
+    setNativeValue(el, text);
+    dispatchInputEvents(el, text);
+    await delay(Math.max(charDelayMs, 20));
+    return;
   }
+
+  setContentEditableSelection(htmlEl);
+
+  let inserted = false;
+  if (document.execCommand) {
+    inserted = document.execCommand('insertText', false, text);
+  }
+
+  if (!inserted || !elementContainsText(el, text)) {
+    dispatchPaste(el, text);
+  }
+
+  if (!elementContainsText(el, text)) {
+    writeContentEditableText(htmlEl, text);
+  }
+
+  dispatchInputEvents(el, text);
+  await delay(Math.max(charDelayMs, 20));
+}
+
+function setNativeValue(el: HTMLInputElement | HTMLTextAreaElement, value: string): void {
+  const prototype = el instanceof HTMLTextAreaElement
+    ? HTMLTextAreaElement.prototype
+    : HTMLInputElement.prototype;
+  const valueSetter = Object.getOwnPropertyDescriptor(prototype, 'value')?.set;
+  valueSetter?.call(el, value);
+  if (!valueSetter) el.value = value;
+}
+
+function setContentEditableSelection(el: HTMLElement): void {
+  const selection = window.getSelection();
+  if (!selection) return;
+
+  const range = document.createRange();
+  range.selectNodeContents(el);
+  range.collapse(false);
+  selection.removeAllRanges();
+  selection.addRange(range);
+}
+
+function dispatchPaste(el: Element, text: string): void {
+  try {
+    const data = new DataTransfer();
+    data.setData('text/plain', text);
+    const event = new ClipboardEvent('paste', {
+      bubbles: true,
+      cancelable: true,
+      clipboardData: data,
+    });
+    el.dispatchEvent(event);
+  } catch {
+    // ClipboardEvent/DataTransfer may be unavailable in test environments.
+  }
+}
+
+function writeContentEditableText(el: HTMLElement, text: string): void {
+  const paragraph = document.createElement('p');
+  paragraph.textContent = text;
+  el.replaceChildren(paragraph);
+}
+
+function dispatchInputEvents(el: Element, text: string): void {
+  const inputEventInit: InputEventInit = {
+    bubbles: true,
+    cancelable: true,
+    composed: true,
+    data: text,
+    inputType: 'insertText',
+  };
+
+  try {
+    el.dispatchEvent(new InputEvent('beforeinput', inputEventInit));
+    el.dispatchEvent(new InputEvent('input', inputEventInit));
+  } catch {
+    el.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
+  }
+
+  el.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+}
+
+function elementContainsText(el: Element, text: string): boolean {
+  if (el instanceof HTMLTextAreaElement || el instanceof HTMLInputElement) {
+    return el.value.includes(text);
+  }
+  return (el.textContent ?? '').includes(text);
 }

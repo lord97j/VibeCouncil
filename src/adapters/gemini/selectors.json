@@ -1,7 +1,7 @@
 {
   "version": "2024.6",
-  "promptInput": "div.ql-editor[contenteditable='true'], textarea[placeholder*='Enter'], .input-area-container textarea",
-  "sendButton": "button[aria-label='Send message'], button.send-button, mat-icon-button[aria-label*='Send']",
+  "promptInput": "div.ql-editor[contenteditable='true'], rich-textarea div[contenteditable='true'][role='textbox'], textarea[placeholder*='Enter'], .input-area-container textarea",
+  "sendButton": "button[aria-label='Send message'], button[aria-label='发送'], button[aria-label*='Send'], button[aria-label*='发送'], button.send-button, mat-icon-button[aria-label*='Send']",
   "lastResponse": ".model-response-text:last-child, message-content:last-child, .conversation-container .response-container:last-child .markdown",
   "generating": ".response-streaming, .loading-indicator, .generating-indicator",
   "loggedIn": "img[data-profile-avatar], [aria-label='Account'], .user-profile-icon",

@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { querySelectorFallback, waitFor, delay, typeIntoInput } from '@/utils/dom';
 
 describe('querySelectorFallback', () => {
@@ -44,5 +44,38 @@ describe('typeIntoInput', () => {
     document.body.appendChild(el);
     await typeIntoInput(el, 'ab', 5);
     expect(el.textContent).toBe('ab');
+  });
+
+  it('sets textarea value through native input semantics', async () => {
+    const el = document.createElement('textarea');
+    const onInput = vi.fn();
+    const onChange = vi.fn();
+    el.addEventListener('input', onInput);
+    el.addEventListener('change', onChange);
+    document.body.appendChild(el);
+
+    await typeIntoInput(el, 'vibecoding能替代传统coding吗', 5);
+
+    expect(el.value).toBe('vibecoding能替代传统coding吗');
+    expect(onInput).toHaveBeenCalled();
+    expect(onChange).toHaveBeenCalled();
+  });
+
+  it('uses execCommand insertion when a contenteditable editor accepts it', async () => {
+    const originalExecCommand = document.execCommand;
+    const el = document.createElement('div');
+    el.contentEditable = 'true';
+    document.body.appendChild(el);
+
+    document.execCommand = vi.fn((_command, _showUi, value) => {
+      el.textContent = value ?? '';
+      return true;
+    }) as typeof document.execCommand;
+
+    await typeIntoInput(el, 'prompt', 5);
+
+    expect(document.execCommand).toHaveBeenCalledWith('insertText', false, 'prompt');
+    expect(el.textContent).toBe('prompt');
+    document.execCommand = originalExecCommand;
   });
 });

@@ -1,7 +1,7 @@
 {
   "version": "2024.6",
-  "promptInput": "#prompt-textarea, div[contenteditable][data-id='root'], textarea[placeholder*='Message']",
-  "sendButton": "button[data-testid='send-button'], button[aria-label='Send prompt']",
+  "promptInput": "#prompt-textarea, div[contenteditable][data-id='root'], textarea[placeholder*='Message'], textarea[aria-label*='ChatGPT'], textarea[aria-label*='聊天']",
+  "sendButton": "button[data-testid='send-button'], button[aria-label='Send prompt'], button[aria-label*='Send'], button[aria-label*='发送']",
   "lastResponse": "[data-message-author-role='assistant']:last-child .markdown, .agent-turn:last-child .markdown",
   "generating": "[data-testid='stop-button'], .result-streaming",
   "loggedIn": "nav[aria-label='Chat history'], [data-testid='profile-button'], button[aria-label='Open profile menu']",

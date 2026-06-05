@@ -18,7 +18,9 @@ export abstract class BaseAdapter implements AIPlatformAdapter {
   }
 
   protected getSendButton(): Element | null {
-    return querySelectorFallback(this.selectors.sendButton);
+    const button = querySelectorFallback(this.selectors.sendButton);
+    if (!button || !isClickableButton(button)) return null;
+    return button;
   }
 
   protected getLastResponseElement(): Element | null {
@@ -43,7 +45,7 @@ export abstract class BaseAdapter implements AIPlatformAdapter {
     if (!input) throw new Error(`[${this.id}] Prompt input not found`);
 
     await typeIntoInput(input, text);
-    await delay(200);
+    await waitFor(() => this.getSendButton() !== null, 5000, 100);
 
     const sendBtn = this.getSendButton();
     if (!sendBtn) throw new Error(`[${this.id}] Send button not found`);
@@ -78,4 +80,9 @@ export abstract class BaseAdapter implements AIPlatformAdapter {
     return this.getLoginIndicator() !== null
       && this.getPromptInput() !== null;
   }
+}
+
+function isClickableButton(el: Element): boolean {
+  if (!(el instanceof HTMLButtonElement)) return true;
+  return !el.disabled && el.getAttribute('aria-disabled') !== 'true';
 }
