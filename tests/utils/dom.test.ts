@@ -78,4 +78,25 @@ describe('typeIntoInput', () => {
     expect(el.textContent).toBe('prompt');
     document.execCommand = originalExecCommand;
   });
+
+  it('does not replay inserted text through beforeinput after execCommand succeeds', async () => {
+    const originalExecCommand = document.execCommand;
+    const el = document.createElement('div');
+    el.contentEditable = 'true';
+    document.body.appendChild(el);
+
+    el.addEventListener('beforeinput', event => {
+      const inputEvent = event as InputEvent;
+      if (inputEvent.data) el.textContent += inputEvent.data;
+    });
+    document.execCommand = vi.fn((_command, _showUi, value) => {
+      el.textContent = value ?? '';
+      return true;
+    }) as typeof document.execCommand;
+
+    await typeIntoInput(el, 'prompt', 5);
+
+    expect(el.textContent).toBe('prompt');
+    document.execCommand = originalExecCommand;
+  });
 });

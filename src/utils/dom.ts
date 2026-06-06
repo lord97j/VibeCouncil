@@ -71,7 +71,9 @@ export async function typeIntoInput(
     inserted = document.execCommand('insertText', false, text);
   }
 
-  if (!inserted || !elementContainsText(el, text)) {
+  const insertedByEditor = inserted && elementContainsText(el, text);
+
+  if (!insertedByEditor) {
     dispatchPaste(el, text);
   }
 
@@ -79,7 +81,11 @@ export async function typeIntoInput(
     writeContentEditableText(htmlEl, text);
   }
 
-  dispatchInputEvents(el, text);
+  if (insertedByEditor) {
+    dispatchEditorSyncEvents(el);
+  } else {
+    dispatchInputEvents(el, text);
+  }
   await delay(Math.max(charDelayMs, 20));
 }
 
@@ -140,6 +146,11 @@ function dispatchInputEvents(el: Element, text: string): void {
     el.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
   }
 
+  el.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+}
+
+function dispatchEditorSyncEvents(el: Element): void {
+  el.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
   el.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
 }
 
