@@ -1,0 +1,9 @@
+{
+  "version": "2026.6",
+  "promptInput": "div[contenteditable='true'][aria-label*='Claude'], div[role='textbox'][contenteditable='true'], [aria-label='Write your prompt to Claude'], div.ProseMirror[contenteditable='true'], textarea",
+  "sendButton": "button[aria-label*='Send'], button[aria-label*='发送'], button[type='submit'], button:has(svg[class*='send' i])",
+  "lastResponse": "[data-testid='message-content']:last-child, .font-claude-message:last-child, .prose:last-child, [class*='message']:last-child, [class*='markdown']:last-child",
+  "generating": "button[aria-label*='Stop'], button[aria-label*='停止'], [data-testid*='stop'], [class*='loading'], [class*='generating']",
+  "loggedIn": "[aria-label='Write your prompt to Claude'], div[contenteditable='true'][aria-label*='Claude']",
+  "continueButton": "button[aria-label*='Continue'], button[aria-label*='继续']"
+}

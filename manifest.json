@@ -13,7 +13,11 @@
   ],
   "host_permissions": [
     "https://chatgpt.com/*",
-    "https://gemini.google.com/*"
+    "https://gemini.google.com/*",
+    "https://chat.deepseek.com/*",
+    "https://www.qianwen.com/*",
+    "https://grok.com/*",
+    "https://claude.ai/*"
   ],
   "side_panel": {
     "default_path": "src/sidepanel/index.html"
@@ -34,6 +38,26 @@
     {
       "matches": ["https://gemini.google.com/*"],
       "js": ["src/adapters/gemini/index.ts"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://chat.deepseek.com/*"],
+      "js": ["src/adapters/deepseek/index.ts"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://www.qianwen.com/*"],
+      "js": ["src/adapters/qianwen/index.ts"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://grok.com/*"],
+      "js": ["src/adapters/grok/index.ts"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://claude.ai/*"],
+      "js": ["src/adapters/claude/index.ts"],
       "run_at": "document_idle"
     }
   ]

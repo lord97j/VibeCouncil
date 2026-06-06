@@ -1,0 +1,9 @@
+{
+  "version": "2026.6",
+  "promptInput": "div[contenteditable='true'][role='textbox'], div[contenteditable='true'][data-slate-editor='true'], div[contenteditable='true']",
+  "sendButton": "button[aria-label='发送消息'], button[aria-label*='发送'], button[aria-label*='Send'], button:has([data-icon-type*='send' i])",
+  "lastResponse": "[class*='markdown']:last-child, [class*='answer']:last-child, [class*='message']:last-child, [data-message-role='assistant']:last-child",
+  "generating": "button[aria-label*='停止'], button[aria-label*='Stop'], [class*='loading'], [class*='generating']",
+  "loggedIn": "div[contenteditable='true'][role='textbox'], button[aria-label='发送消息']",
+  "continueButton": "button[aria-label*='继续'], button[aria-label*='Continue']"
+}

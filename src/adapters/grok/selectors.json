@@ -1,0 +1,9 @@
+{
+  "version": "2026.6",
+  "promptInput": "div[contenteditable='true'][aria-label*='Grok'], div.tiptap[contenteditable='true'], div.ProseMirror[contenteditable='true'], textarea",
+  "sendButton": "button[aria-label*='Submit'], button[aria-label*='Send'], button[aria-label*='发送'], button[type='submit'], button:has(svg[class*='send' i])",
+  "lastResponse": ".prose:last-child, [class*='response']:last-child, [class*='message']:last-child, [class*='markdown']:last-child",
+  "generating": "button[aria-label*='Stop'], button[aria-label*='停止'], [class*='generating'], [class*='loading']",
+  "loggedIn": "div[contenteditable='true'][aria-label*='Grok'], div.tiptap[contenteditable='true']",
+  "continueButton": "button[aria-label*='Continue'], button[aria-label*='继续']"
+}

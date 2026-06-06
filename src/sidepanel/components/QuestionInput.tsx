@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useDiscussionStore } from '../store/discussionStore';
+import { AI_PLATFORMS } from '@/platforms';
 
 const STRATEGIES = [
   { id: 'parallel', name: '快速对比' },
@@ -8,11 +9,6 @@ const STRATEGIES = [
   { id: 'six-hats', name: '多视角分析' },
   { id: 'red-blue', name: '攻防评审' },
   { id: 'matrix', name: '选型打分' },
-];
-
-const ADAPTERS = [
-  { id: 'chatgpt', name: 'ChatGPT' },
-  { id: 'gemini', name: 'Gemini' },
 ];
 
 const STYLES = [
@@ -38,7 +34,7 @@ export default function QuestionInput() {
         strategyId,
         judgeAdapterId: judgeId,
         promptStyle: style as 'strict' | 'creative' | 'neutral',
-        participantIds: ADAPTERS.map(a => a.id),
+        participantIds: AI_PLATFORMS.map(a => a.id),
       });
     } catch (err) {
       console.error('[VibeCouncil] Failed to start:', err);
@@ -90,7 +86,7 @@ export default function QuestionInput() {
           value={judgeId}
           onChange={e => setJudgeId(e.target.value)}
         >
-          {ADAPTERS.map(a => (
+          {AI_PLATFORMS.map(a => (
             <option key={a.id} value={a.id}>裁判: {a.name}</option>
           ))}
         </select>

@@ -18,9 +18,17 @@ export abstract class BaseAdapter implements AIPlatformAdapter {
   }
 
   protected getSendButton(): Element | null {
-    const button = querySelectorFallback(this.selectors.sendButton);
-    if (!button || !isClickableButton(button)) return null;
-    return button;
+    for (const selector of this.selectors.sendButton.split(',').map(s => s.trim())) {
+      if (!selector) continue;
+      try {
+        for (const button of document.querySelectorAll(selector)) {
+          if (isClickableButton(button)) return button;
+        }
+      } catch {
+        // Invalid selector — skip
+      }
+    }
+    return null;
   }
 
   protected getLastResponseElement(): Element | null {
@@ -45,11 +53,23 @@ export abstract class BaseAdapter implements AIPlatformAdapter {
     if (!input) throw new Error(`[${this.id}] Prompt input not found`);
 
     await typeIntoInput(input, text);
-    await waitFor(() => this.getSendButton() !== null, 5000, 100);
 
-    const sendBtn = this.getSendButton();
-    if (!sendBtn) throw new Error(`[${this.id}] Send button not found`);
-    (sendBtn as HTMLButtonElement).click();
+    let sendBtn: Element | null = null;
+    try {
+      await waitFor(() => this.getSendButton() !== null, 5000, 100);
+      sendBtn = this.getSendButton();
+    } catch {
+      // Some sites only expose the send affordance after keyboard input,
+      // or use unlabelled controls. Fall back to the standard chat shortcut.
+    }
+
+    if (sendBtn) {
+      (sendBtn as HTMLButtonElement).click();
+    } else {
+      pressEnter(input);
+    }
+
+    await delay(200);
   }
 
   async waitForResponse(timeout = 120000): Promise<string> {
@@ -85,4 +105,21 @@ export abstract class BaseAdapter implements AIPlatformAdapter {
 function isClickableButton(el: Element): boolean {
   if (!(el instanceof HTMLButtonElement)) return true;
   return !el.disabled && el.getAttribute('aria-disabled') !== 'true';
+}
+
+function pressEnter(el: Element): void {
+  const target = el as HTMLElement;
+  target.focus();
+  const eventInit: KeyboardEventInit = {
+    key: 'Enter',
+    code: 'Enter',
+    keyCode: 13,
+    which: 13,
+    bubbles: true,
+    cancelable: true,
+    composed: true,
+  };
+  target.dispatchEvent(new KeyboardEvent('keydown', eventInit));
+  target.dispatchEvent(new KeyboardEvent('keypress', eventInit));
+  target.dispatchEvent(new KeyboardEvent('keyup', eventInit));
 }

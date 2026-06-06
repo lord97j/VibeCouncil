@@ -4,6 +4,10 @@ import { useDiscussionStore } from '../store/discussionStore';
 const ADAPTER_EMOJIS: Record<string, string> = {
   chatgpt: '🤖',
   gemini: '🔷',
+  deepseek: '🌊',
+  qianwen: '✦',
+  grok: '𝕏',
+  claude: '✳',
 };
 
 export default function DiscussionLog() {

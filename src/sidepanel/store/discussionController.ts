@@ -8,6 +8,7 @@ import { strategyRegistry } from '@/strategies';
 import { Orchestrator } from '@/orchestrator/state-machine';
 import { TabManager } from '@/orchestrator/tab-manager';
 import { sendPromptToAdapter } from '@/messaging';
+import { getPlatform, getPlatformLabel } from '@/platforms';
 
 /**
  * Controller that bridges the UI (Zustand store) with the Orchestrator
@@ -50,15 +51,7 @@ export class DiscussionController {
     this.notifyUpdate();
 
     // Find tabs for all participants
-    const adapters = config.participantIds.map(id => ({
-      id,
-      name: id,
-      hostPattern: '',
-      defaultUrl: id === 'chatgpt' ? 'https://chatgpt.com' : 'https://gemini.google.com/app',
-      sendPrompt: async () => {},
-      waitForResponse: async () => '',
-      isReady: async () => false,
-    }));
+    const adapters = config.participantIds.map(createAdapterStub);
 
     const tabs = await this.tabManager.findAdapterTabs(adapters);
     console.log('[VibeCouncil] Found tabs:', [...tabs.entries()].map(([id, t]) => `${id}=${t.id}`).join(', '));
@@ -157,7 +150,7 @@ export class DiscussionController {
   }
 
   private getContentScriptFiles(adapterId: string): string[] {
-    const host = adapterId === 'chatgpt' ? 'chatgpt.com' : 'gemini.google.com';
+    const host = getPlatform(adapterId)?.host ?? adapterId;
     const scripts = chrome.runtime.getManifest().content_scripts ?? [];
     const entry = scripts.find(script =>
       script.matches?.some(match => match.includes(host))
@@ -246,15 +239,7 @@ export class DiscussionController {
 
       // Send next round's prompts
       if (nextActions.length > 0) {
-        const adapters = state.config.participantIds.map(id => ({
-          id,
-          name: id,
-          hostPattern: '',
-          defaultUrl: id === 'chatgpt' ? 'https://chatgpt.com' : 'https://gemini.google.com/app',
-          sendPrompt: async () => {},
-          waitForResponse: async () => '',
-          isReady: async () => false,
-        }));
+        const adapters = state.config.participantIds.map(createAdapterStub);
         const tabs = await this.tabManager.findAdapterTabs(adapters);
         await this.sendActions(nextActions, tabs);
       }
@@ -277,7 +262,7 @@ export class DiscussionController {
           action.adapterId,
           'failed',
           '',
-          `Tab for ${action.adapterId} not found. Please open ${action.adapterId === 'chatgpt' ? 'chatgpt.com' : 'gemini.google.com'} first.`,
+          `未找到 ${getPlatformLabel(action.adapterId)} 标签页。请先打开 ${getPlatform(action.adapterId)?.defaultUrl ?? action.adapterId}。`,
         );
         this.notifyUpdate();
         this.checkAdvanceRound();
@@ -295,7 +280,7 @@ export class DiscussionController {
           action.adapterId,
           'failed',
           '',
-          `无法连接到 ${action.adapterId} 的内容脚本。请刷新 ${action.adapterId === 'chatgpt' ? 'chatgpt.com' : 'gemini.google.com'} 页面后重试。`,
+          `无法连接到 ${getPlatformLabel(action.adapterId)} 的内容脚本。请刷新该页面后重试。`,
         );
         this.notifyUpdate();
         this.checkAdvanceRound();
@@ -315,4 +300,17 @@ export class DiscussionController {
   cleanup(): void {
     chrome.runtime.onMessage.removeListener(this.handleMessage);
   }
+}
+
+function createAdapterStub(id: string) {
+  const platform = getPlatform(id);
+  return {
+    id,
+    name: platform?.name ?? id,
+    hostPattern: platform ? `*://${platform.host}/*` : '',
+    defaultUrl: platform?.defaultUrl ?? '',
+    sendPrompt: async () => {},
+    waitForResponse: async () => '',
+    isReady: async () => false,
+  };
 }

@@ -13,6 +13,22 @@ const chromeMock = {
           matches: ['https://gemini.google.com/*'],
           js: ['assets/gemini-loader.js'],
         },
+        {
+          matches: ['https://chat.deepseek.com/*'],
+          js: ['assets/deepseek-loader.js'],
+        },
+        {
+          matches: ['https://www.qianwen.com/*'],
+          js: ['assets/qianwen-loader.js'],
+        },
+        {
+          matches: ['https://grok.com/*'],
+          js: ['assets/grok-loader.js'],
+        },
+        {
+          matches: ['https://claude.ai/*'],
+          js: ['assets/claude-loader.js'],
+        },
       ],
     })),
     onMessage: {

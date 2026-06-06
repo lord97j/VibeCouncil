@@ -6,11 +6,14 @@ const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
 
 manifest.web_accessible_resources = [
   {
-    matches: ['https://chatgpt.com/*'],
-    resources: ['assets/*'],
-  },
-  {
-    matches: ['https://gemini.google.com/*'],
+    matches: [
+      'https://chatgpt.com/*',
+      'https://gemini.google.com/*',
+      'https://chat.deepseek.com/*',
+      'https://www.qianwen.com/*',
+      'https://grok.com/*',
+      'https://claude.ai/*',
+    ],
     resources: ['assets/*'],
   },
 ];

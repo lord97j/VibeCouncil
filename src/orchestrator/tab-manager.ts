@@ -1,4 +1,5 @@
 import type { AIPlatformAdapter } from '@/types';
+import { getPlatform, urlMatchesPlatform } from '@/platforms';
 
 export class TabManager {
   /**
@@ -12,13 +13,9 @@ export class TabManager {
 
     for (const adapter of adapters) {
       const matched = allTabs.find(tab => {
-        if (!tab.url) return false;
-        try {
-          const hostname = new URL(tab.url).hostname;
-          return hostname.includes(adapter.id) || tab.url.includes(adapter.id);
-        } catch {
-          return false;
-        }
+        const platform = getPlatform(adapter.id);
+        if (platform) return urlMatchesPlatform(tab.url, platform);
+        return tab.url?.includes(adapter.id) ?? false;
       });
       if (matched) {
         result.set(adapter.id, matched);

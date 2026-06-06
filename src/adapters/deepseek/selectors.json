@@ -1,0 +1,9 @@
+{
+  "version": "2026.6",
+  "promptInput": "textarea[placeholder*='DeepSeek'], textarea[placeholder*='发送消息'], textarea",
+  "sendButton": "[role='button'][aria-label*='发送'], [role='button'][class*='send'], div[role='button']:has(svg), button[aria-label*='发送'], button[aria-label*='Send']",
+  "lastResponse": ".ds-markdown:last-child, [class*='markdown']:last-child, [class*='answer']:last-child, [class*='message']:last-child",
+  "generating": "[class*='stop'], [class*='loading'], [class*='generating'], [aria-label*='停止'], [aria-label*='Stop']",
+  "loggedIn": "textarea[placeholder*='DeepSeek'], textarea",
+  "continueButton": "button[aria-label*='Continue'], button[aria-label*='继续']"
+}
