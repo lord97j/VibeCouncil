@@ -29,6 +29,14 @@ const chromeMock = {
           matches: ['https://claude.ai/*'],
           js: ['assets/claude-loader.js'],
         },
+        {
+          matches: ['https://www.doubao.com/*'],
+          js: ['assets/doubao-loader.js'],
+        },
+        {
+          matches: ['https://www.kimi.com/*'],
+          js: ['assets/kimi-loader.js'],
+        },
       ],
     })),
     onMessage: {

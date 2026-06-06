@@ -13,6 +13,8 @@ manifest.web_accessible_resources = [
       'https://www.qianwen.com/*',
       'https://grok.com/*',
       'https://claude.ai/*',
+      'https://www.doubao.com/*',
+      'https://www.kimi.com/*',
     ],
     resources: ['assets/*'],
   },

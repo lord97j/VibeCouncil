@@ -8,6 +8,8 @@ const ADAPTER_EMOJIS: Record<string, string> = {
   qianwen: '✦',
   grok: '𝕏',
   claude: '✳',
+  doubao: '豆',
+  kimi: 'K',
 };
 
 export default function DiscussionLog() {

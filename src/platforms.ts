@@ -13,6 +13,8 @@ export const AI_PLATFORMS: PlatformConfig[] = [
   { id: 'claude', name: 'Claude', defaultUrl: 'https://claude.ai/new', host: 'claude.ai', region: 'global' },
   { id: 'deepseek', name: 'DeepSeek', defaultUrl: 'https://chat.deepseek.com/', host: 'chat.deepseek.com', region: 'china' },
   { id: 'qianwen', name: '千问', defaultUrl: 'https://www.qianwen.com/', host: 'www.qianwen.com', region: 'china' },
+  { id: 'doubao', name: '豆包', defaultUrl: 'https://www.doubao.com/chat', host: 'www.doubao.com', region: 'china' },
+  { id: 'kimi', name: 'Kimi', defaultUrl: 'https://www.kimi.com/zh', host: 'www.kimi.com', region: 'china' },
 ];
 
 export function getPlatform(id: string): PlatformConfig | undefined {

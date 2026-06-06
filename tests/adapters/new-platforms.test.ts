@@ -3,6 +3,8 @@ import { DeepSeekAdapter } from '@/adapters/deepseek';
 import { QianwenAdapter } from '@/adapters/qianwen';
 import { GrokAdapter } from '@/adapters/grok';
 import { ClaudeAdapter } from '@/adapters/claude';
+import { DoubaoAdapter } from '@/adapters/doubao';
+import { KimiAdapter } from '@/adapters/kimi';
 import { AI_PLATFORMS, urlMatchesPlatform } from '@/platforms';
 
 describe('new platform adapters', () => {
@@ -10,7 +12,7 @@ describe('new platform adapters', () => {
     document.body.innerHTML = '';
   });
 
-  it('registers DeepSeek, Qianwen, Grok, and Claude platform metadata', () => {
+  it('registers all expanded platform metadata', () => {
     expect(AI_PLATFORMS.map(platform => platform.id)).toEqual([
       'chatgpt',
       'gemini',
@@ -18,11 +20,15 @@ describe('new platform adapters', () => {
       'claude',
       'deepseek',
       'qianwen',
+      'doubao',
+      'kimi',
     ]);
     expect(urlMatchesPlatform('https://grok.com/?q=', AI_PLATFORMS[2])).toBe(true);
     expect(urlMatchesPlatform('https://claude.ai/new', AI_PLATFORMS[3])).toBe(true);
     expect(urlMatchesPlatform('https://chat.deepseek.com/', AI_PLATFORMS[4])).toBe(true);
     expect(urlMatchesPlatform('https://www.qianwen.com/', AI_PLATFORMS[5])).toBe(true);
+    expect(urlMatchesPlatform('https://www.doubao.com/chat', AI_PLATFORMS[6])).toBe(true);
+    expect(urlMatchesPlatform('https://www.kimi.com/zh', AI_PLATFORMS[7])).toBe(true);
   });
 
   it('detects DeepSeek ready state from its textarea', async () => {
@@ -53,6 +59,20 @@ describe('new platform adapters', () => {
     const adapter = new ClaudeAdapter();
     document.body.innerHTML = '<div aria-label="Write your prompt to Claude" contenteditable="true"></div>';
     expect(adapter.defaultUrl).toContain('claude.ai');
+    expect(await adapter.isReady()).toBe(true);
+  });
+
+  it('detects Doubao ready state from its prompt textarea', async () => {
+    const adapter = new DoubaoAdapter();
+    document.body.innerHTML = '<textarea placeholder="和豆包聊聊"></textarea>';
+    expect(adapter.name).toBe('豆包');
+    expect(await adapter.isReady()).toBe(true);
+  });
+
+  it('detects Kimi ready state from its prompt textarea', async () => {
+    const adapter = new KimiAdapter();
+    document.body.innerHTML = '<textarea placeholder="Kimi"></textarea>';
+    expect(adapter.defaultUrl).toContain('kimi.com');
     expect(await adapter.isReady()).toBe(true);
   });
 });

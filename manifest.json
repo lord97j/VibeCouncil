@@ -17,7 +17,9 @@
     "https://chat.deepseek.com/*",
     "https://www.qianwen.com/*",
     "https://grok.com/*",
-    "https://claude.ai/*"
+    "https://claude.ai/*",
+    "https://www.doubao.com/*",
+    "https://www.kimi.com/*"
   ],
   "side_panel": {
     "default_path": "src/sidepanel/index.html"
@@ -58,6 +60,16 @@
     {
       "matches": ["https://claude.ai/*"],
       "js": ["src/adapters/claude/index.ts"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://www.doubao.com/*"],
+      "js": ["src/adapters/doubao/index.ts"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://www.kimi.com/*"],
+      "js": ["src/adapters/kimi/index.ts"],
       "run_at": "document_idle"
     }
   ]
